@@ -1,0 +1,4 @@
+.vscode
+.zshrc
+.zsh
+zsh_custom/**.private.*
