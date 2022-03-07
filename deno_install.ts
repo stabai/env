@@ -1,4 +1,5 @@
-import { basename, join } from "https://deno.land/std@0.128.0/path/mod.ts";
+import { basename, extname, join } from "https://deno.land/std@0.128.0/path/mod.ts";
+import { ensureDir } from "https://deno.land/std@0.128.0/fs/mod.ts";
 import { isMac, isLinux, isWsl, linuxThirdPartyPackageManager, homeDir, linuxPackageManager } from "./environment.ts";
 import { finishProcess, run } from "./run.ts";
 import { isInstalled, nonUiSoftware, uiSoftware } from "./software.ts";
@@ -94,11 +95,7 @@ async function installLinux(software: AnySoftware, isWsl: boolean): Promise<void
     }
     await run([...command, software.flatpakPackage.package]);
   } else if (linuxThirdPartyPackageManager === 'dpkg' && software.dpkgThirdParty != null) {
-    const baseFileName = basename(software.dpkgThirdParty);
-    const downloadDir = join(homeDir, 'Downloads');
-    const localFilePath = join(downloadDir, baseFileName);
-    await run(['mkdir', '-p', downloadDir]);
-    await run(['wget', software.dpkgThirdParty, '-o', localFilePath]);
+    const localFilePath = await downloadFile(software.dpkgThirdParty);
     await run(['sudo', 'dpkg', '-i', localFilePath]);
   } else if (linuxThirdPartyPackageManager === 'eopkg' && software.eopkgThirdParty != null) {
     await run(['sudo', 'eopkg', 'bi', '--ignore-safety', software.eopkgThirdParty.specUrl]);
@@ -106,6 +103,10 @@ async function installLinux(software: AnySoftware, isWsl: boolean): Promise<void
     await run(['sudo', 'rm', software.eopkgThirdParty.packageFilePattern]);
   } else if (linuxPackageManager != null && software.linuxPackages != null) {
     await run(['sudo', linuxPackageManager, 'install', ...software.linuxPackages]);
+  } else if (software.tarballPackage != null) {
+    const localFilePath = await downloadFile(software.tarballPackage.packageUrl);
+    const extractDir = await extractTarball(localFilePath);
+    await software.tarballPackage.installer(extractDir);
   } else if (isWsl && software.wslManualInstallCommand != null) {
     await run(['eval', software.wslManualInstallCommand]);
   } else if (software.linuxManualInstallCommand != null) {
@@ -113,4 +114,21 @@ async function installLinux(software: AnySoftware, isWsl: boolean): Promise<void
   } else {
     throw new Error(`No installation method for ${software.name}.`);
   }
+}
+
+async function downloadFile(fileUrl: string): Promise<string> {
+  const baseFileName = basename(fileUrl);
+  const downloadDir = join(homeDir, 'Downloads');
+  const localFilePath = join(downloadDir, baseFileName);
+  await ensureDir(downloadDir);
+  await run(['wget', fileUrl, '-o', localFilePath]);
+  return localFilePath;
+}
+
+async function extractTarball(filePath: string): Promise<string> {
+  const extension = extname(filePath);
+  const extractDir = filePath.substring(0, filePath.length - extension.length);
+  await ensureDir(extractDir);
+  await run(['tar', 'zxf', filePath, `--directory=${extractDir}`]);
+  return extractDir;
 }

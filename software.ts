@@ -70,6 +70,17 @@ export const uiSoftware: UiSoftware[] = [
     snapPackage: { package: 'code', classic: true },
   },
   {
+    name: 'JetBrains Toolbox',
+    commandName: 'jetbrains-toolbox',
+    brewPackage: { cask: 'jetbrains-toolbox', macOnly: true },
+    tarballPackage: {
+      packageUrl: 'https://download.jetbrains.com/toolbox/jetbrains-toolbox-1.22.10970.tar.gz',
+      installer: async extractedDir => {
+        await run([`${extractedDir}/jetbrains-toolbox`]);
+      },
+    },
+  },
+  {
     name: 'Zoom',
     commandName: 'zoom',
     brewPackage: { cask: 'zoom', macOnly: true },
@@ -98,6 +109,11 @@ export const uiSoftware: UiSoftware[] = [
     commandName: 'insomnia',
     brewPackage: { cask: 'github', macOnly: true },
     flatpakPackage: { remote: 'flathub', package: 'io.github.shiftey.Desktop' },
+  },
+  {
+    name: 'Karabiner-Elements',
+    commandName: 'Karabiner-Elements',
+    brewPackage: { cask: 'karabiner-elements', macOnly: true },
   },
 ];
 

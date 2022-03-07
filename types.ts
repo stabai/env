@@ -7,6 +7,7 @@ export interface CommandSoftware {
   flatpakPackage?: FlatpakPackage;
   eopkgThirdParty?: EopkgThirdParty;
   dpkgThirdParty?: string;
+  tarballPackage?: TarballPackage;
   linuxPackages?: string[];
   linuxManualInstallCommand?: string;
   wslManualInstallCommand?: string;
@@ -21,6 +22,7 @@ export interface PassiveSoftware {
   flatpakPackage?: FlatpakPackage;
   eopkgThirdParty?: EopkgThirdParty;
   dpkgThirdParty?: string;
+  tarballPackage?: TarballPackage;
   linuxPackages?: string[];
   linuxManualInstallCommand?: string;
   wslManualInstallCommand?: string;
@@ -34,6 +36,7 @@ export interface UiSoftware {
   flatpakPackage?: FlatpakPackage;
   eopkgThirdParty?: EopkgThirdParty;
   dpkgThirdParty?: string;
+  tarballPackage?: TarballPackage;
   postInstall?: () => Promise<void>;
 }
 export type NonUiSoftware = CommandSoftware | PassiveSoftware;
@@ -69,6 +72,11 @@ export interface EopkgThirdParty {
 export interface SnapPackage {
   package: string;
   classic?: boolean;
+}
+
+export interface TarballPackage {
+  packageUrl: string;
+  installer: (extractedDir: string) => Promise<void>;
 }
 
 export interface ProcessResult {
