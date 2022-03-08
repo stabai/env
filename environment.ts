@@ -2,13 +2,18 @@ import { dirname, fromFileUrl } from "https://deno.land/std@0.128.0/path/win32.t
 import { runEval } from "./run.ts";
 import { isInstalled } from "./software.ts";
 
+let _isGnome: boolean | undefined;
+
 export async function isGnome(): Promise<boolean> {
-  try {
-    const result = await runEval('pgrep gnome-shell');
-    return result.status.success;
-  } catch (_) {
-    return false;
+  if (_isGnome == null) {
+    try {
+      const result = await runEval('pgrep gnome-shell');
+      _isGnome = result.status.success;
+    } catch (_) {
+      _isGnome = false;
+    }
   }
+  return _isGnome;
 }
 
 async function getLinuxPackageManager(): Promise<string | undefined> {
