@@ -37,16 +37,24 @@ function install_brew {
   echo "✅ Homebrew was successfully installed."
 }
 
-function install_all {
+function preinstall {
   if [ -x "$(command -v curl)" ]; then
     echo "✅ curl is installed."
     return 0
   else
     install_curl
+    echo "Run this script again to continue installations:"
+    echo "  $0"
+    return 0
   fi
 
   if [ -x "$(command -v brew)" ]; then
     echo "✅ Homebrew is installed."
+    return 0
+  else
+    install_brew
+    echo "Run this script again to continue installations:"
+    echo "  $0"
     return 0
   fi
 
@@ -63,4 +71,4 @@ function install_all {
   echo "  deno run --allow-all deno_install.ts"
 }
 
-install_all
+preinstall
