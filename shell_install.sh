@@ -16,7 +16,6 @@ function install_curl {
     sudo eopkg install curl
     echo "✅ curl was successfully installed."
     return 0
-  else
   fi
 
   echo "⛔ You don't have curl installed, and I don't know how to install it without apt or eopkg."
@@ -61,5 +60,7 @@ function install_all {
 
   echo "✅ Homebrew + bundle are installed!"
   echo "Run the following to continue installations:"
-  echo "  deno run --allow-all deno_install.ts
+  echo "  deno run --allow-all deno_install.ts"
 }
+
+install_all
