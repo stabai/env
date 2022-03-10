@@ -66,7 +66,7 @@ function preinstall {
 
   echo "✅ Homebrew + bundle are installed!"
   echo "Run the following to continue installations:"
-  echo "  deno run --allow-all deno_install.ts"
+  echo "  ./deno_install.ts"
 }
 
 preinstall

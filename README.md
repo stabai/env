@@ -15,7 +15,7 @@ Once the shell script succeeds in installing Homebrew and the brew bundle, it
 will instruct you to continue by running the Deno installer script:
 
 ```shell
-deno run --allow-all deno_install.ts
+./deno_install.ts
 ```
 
 The Deno script allows elegant handling of more complicated installations, so
