@@ -2,3 +2,7 @@
 .zshrc
 .zsh
 zsh_custom/**.private.*
+
+# Apple folder customizations
+.DS_Store
+Icon?

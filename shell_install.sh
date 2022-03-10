@@ -40,7 +40,6 @@ function install_brew {
 function preinstall {
   if [ -x "$(command -v curl)" ]; then
     echo "✅ curl is installed."
-    return 0
   else
     install_curl
     echo "Run this script again to continue installations:"
@@ -50,7 +49,6 @@ function preinstall {
 
   if [ -x "$(command -v brew)" ]; then
     echo "✅ Homebrew is installed."
-    return 0
   else
     install_brew
     echo "Run this script again to continue installations:"

@@ -1,13 +1,18 @@
-export type InstallationChecker = { commandName: string, litmusFiles?: never } | { litmusFiles: string[], commandName?: never };
+interface CommandChecker {
+  commandName: string;
+}
+interface LitmusFileChecker {
+  litmusFiles: string[];
+}
+export type InstallationChecker = CommandChecker | LitmusFileChecker;
 
-export type Platform = 'linux-gnu' | 'darwin';
+export type Platform = 'darwin' | 'linux' | 'windows';
 
-export interface CommandSoftware {
+export interface NonUiSoftware {
   name: string;
   platforms: Platform[];
-  installationChecker: InstallationChecker;
-  brewPackage?: HomebrewPackage;
-  macManualInstallCommand?: string;
+  installationChecker?: InstallationChecker;
+  brewPackage?: HomebrewBottle;
   snapPackage?: SnapPackage;
   flatpakPackage?: FlatpakPackage;
   eopkgThirdParty?: EopkgThirdParty;
@@ -15,13 +20,14 @@ export interface CommandSoftware {
   tarballPackage?: TarballPackage;
   linuxPackages?: string[];
   linuxManualInstallCommand?: string;
+  macManualInstallCommand?: string;
   wslManualInstallCommand?: string;
   postInstall?: () => Promise<void>;
 }
 export interface UiSoftware {
   name: string;
   platforms: Platform[];
-  installationChecker: InstallationChecker;
+  installationChecker?: InstallationChecker;
   brewPackage?: HomebrewPackage;
   snapPackage?: SnapPackage;
   flatpakPackage?: FlatpakPackage;
@@ -30,11 +36,9 @@ export interface UiSoftware {
   tarballPackage?: TarballPackage;
   postInstall?: () => Promise<void>;
 }
-export type NonUiSoftware = CommandSoftware;
 export type Software = NonUiSoftware | UiSoftware;
-export type AnySoftware = UiSoftware & Partial<Omit<CommandSoftware, keyof UiSoftware>>;
 
-export interface HomebrewShellPackage {
+export interface HomebrewBottle {
   tap?: string;
   package: string;
   macOnly: boolean;
@@ -44,7 +48,7 @@ export interface HomebrewCask {
   cask: string;
   macOnly: true;
 }
-export type HomebrewPackage = HomebrewShellPackage | HomebrewCask;
+export type HomebrewPackage = HomebrewBottle | HomebrewCask;
 
 export function isCask(pkg: HomebrewPackage): pkg is HomebrewCask {
   return Object.getOwnPropertyNames(pkg).includes('cask');
@@ -86,4 +90,11 @@ export type CommandYargs = any;
 export interface NamedArgs extends Record<string, any> {
   _: string[];
   $0: string;
+}
+
+export function hasKey<T>(obj: unknown, discriminant: keyof T): obj is T {
+  if (obj == null) {
+    return false;
+  }
+  return Object.hasOwn(obj as Record<string, unknown>, discriminant);
 }

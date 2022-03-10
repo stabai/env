@@ -36,8 +36,8 @@ source.
 - deno_install.ts
   1. Zsh
   2. Oh My Zsh
-  3. Snap
-  4. Flatpak
+  3. Snap (Linux only)
+  4. Flatpak (Linux only)
   5. Nix
   6. UI Apps
      - Chrome
@@ -47,3 +47,8 @@ source.
      - Discord
      - Insomnia
      - GitHub Desktop
+     - Karabiner-Elements (Mac only)
+     - Alfred (Mac only)
+     - AltTab (Mac only)
+     - DevToys (Mac only)
+     - Iterm (Mac only)
