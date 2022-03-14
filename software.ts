@@ -69,7 +69,7 @@ export const uiSoftware: UiSoftware[] = [
   {
     name: 'Google Chrome',
     platforms: ['darwin', 'linux'],
-    installationChecker: { commandName: 'google-chrome' },
+    installationChecker: { commandName: 'google-chrome' }, // TODO: also google-chrome-stable
     brewPackage: { cask: 'google-chrome', macOnly: true },
     dpkgThirdParty: 'https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb',
     eopkgThirdParty: {
@@ -81,7 +81,8 @@ export const uiSoftware: UiSoftware[] = [
   {
     name: 'Visual Studio Code',
     platforms: ['darwin', 'linux'],
-    installationChecker: { commandName: 'code' },
+    installationChecker: { commandName: 'code' }, // TODO: also code-oss
+    // Add: sudo eopkg install vscode
     brewPackage: { cask: 'visual-studio-code', macOnly: true },
     snapPackage: { package: 'code', classic: true },
   },
@@ -98,7 +99,7 @@ export const uiSoftware: UiSoftware[] = [
     tarballPackage: {
       packageUrl: 'https://download.jetbrains.com/toolbox/jetbrains-toolbox-1.22.10970.tar.gz',
       installer: async (extractedDir) => {
-        await run([`${extractedDir}/jetbrains-toolbox`]);
+        await run([`${extractedDir}/jetbrains-toolbox-1.22.10970/jetbrains-toolbox`]);
       },
     },
   },
@@ -113,6 +114,7 @@ export const uiSoftware: UiSoftware[] = [
     name: 'Slack',
     platforms: ['darwin', 'linux'],
     installationChecker: { commandName: 'slack' },
+    // TODO: Add: sudo eopkg install slack-desktop
     brewPackage: { cask: 'slack', macOnly: true },
     snapPackage: { package: 'slack', classic: true },
   },
@@ -120,6 +122,7 @@ export const uiSoftware: UiSoftware[] = [
     name: 'Discord',
     platforms: ['darwin', 'linux'],
     installationChecker: { commandName: 'discord' },
+    // TODO: Add: sudo eopkg install discord
     brewPackage: { cask: 'discord', macOnly: true },
     snapPackage: { package: 'discord' },
   },
@@ -127,9 +130,12 @@ export const uiSoftware: UiSoftware[] = [
     name: 'Insomnia',
     platforms: ['darwin', 'linux'],
     installationChecker: { commandName: 'insomnia' },
+    // TODO: Add: sudo eopkg install insomnia
     brewPackage: { cask: 'insomnia', macOnly: true },
     snapPackage: { package: 'insomnia' },
   },
+  // TODO: also add CLI: sudo eopkg install github-cli
+  // TODO: also check installs from flatpak: flatpak info io.github.shiftey.Desktop
   {
     name: 'GitHub Desktop',
     platforms: ['darwin', 'linux'],

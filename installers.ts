@@ -75,7 +75,7 @@ async function downloadFile(fileUrl: string): Promise<string> {
   const downloads = downloadDir();
   const localFilePath = join(downloads, baseFileName);
   await ensureDir(downloads);
-  await run(['wget', fileUrl, '-o', localFilePath]);
+  await run(['wget', '--output-document', localFilePath, fileUrl]);
   return localFilePath;
 }
 
