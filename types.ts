@@ -1,18 +1,19 @@
 interface CommandChecker {
-  commandName: string;
+  commands: string[];
 }
 interface LitmusFileChecker {
-  litmusFiles: string[];
+  files: string[];
 }
 export type InstallationChecker = CommandChecker | LitmusFileChecker;
 
 export type Platform = 'darwin' | 'linux' | 'windows';
 
-export interface NonUiSoftware {
+export interface Software<T extends HomebrewPackage = HomebrewPackage> {
   name: string;
   platforms: Platform[];
+  preferIsolatedInstall?: boolean;
   installationChecker?: InstallationChecker;
-  brewPackage?: HomebrewBottle;
+  brewPackage?: T;
   snapPackage?: SnapPackage;
   flatpakPackage?: FlatpakPackage;
   eopkgThirdParty?: EopkgThirdParty;
@@ -24,19 +25,8 @@ export interface NonUiSoftware {
   wslManualInstallCommand?: string;
   postInstall?: () => Promise<void>;
 }
-export interface UiSoftware {
-  name: string;
-  platforms: Platform[];
-  installationChecker?: InstallationChecker;
-  brewPackage?: HomebrewPackage;
-  snapPackage?: SnapPackage;
-  flatpakPackage?: FlatpakPackage;
-  eopkgThirdParty?: EopkgThirdParty;
-  dpkgThirdParty?: string;
-  tarballPackage?: TarballPackage;
-  postInstall?: () => Promise<void>;
-}
-export type Software = NonUiSoftware | UiSoftware;
+export type NonUiSoftware = Software<HomebrewBottle>;
+export type UiSoftware = Software<HomebrewPackage>;
 
 export interface HomebrewBottle {
   tap?: string;
@@ -96,5 +86,5 @@ export function hasKey<T>(obj: unknown, discriminant: keyof T): obj is T {
   if (obj == null) {
     return false;
   }
-  return Object.hasOwn(obj as Record<string, unknown>, discriminant);
+  return discriminant in (obj as Record<string, unknown>);
 }

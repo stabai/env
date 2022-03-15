@@ -7,8 +7,4 @@ devdir() {
   echo "$DEV"
 }
 
-dev() {
-  cd "$DEV/$@"
-}
-
-complete -C "ls -d $(devdir)/*/ | sed -E 's#.*/([^/]+)/#\1#'" dev
+quick_folder "dev" "$DEV"

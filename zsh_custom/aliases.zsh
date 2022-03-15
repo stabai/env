@@ -1,9 +1,7 @@
 alias src="exec zsh"
 alias ohmy="code $(dirname $(dirname $0))/env.code-workspace"
 
-if [[ "$OSTYPE" == "linux-gnu"* ]]; then
-  alias open="xdg-open"
-fi
+quick_folder "my" "$HOME"
 
 addalias() {
   alias_name="$1"
@@ -12,5 +10,8 @@ addalias() {
   echo "alias $alias_name=\"$@\"" >> $ZSH_CUSTOM/aliases.zsh
 }
 
-alias shawn="fortune | cowsay"
+shawn() {
+  fortune | cowsay -f $(ls /home/linuxbrew/.linuxbrew/Cellar/cowsay/3.04_1/share/cows/*.cow | shuf -n1)
+}
+
 alias yuni="open ~/Downloads/yuni.jpg"

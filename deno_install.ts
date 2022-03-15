@@ -59,13 +59,14 @@ yargs(Deno.args)
       uninstallable: argv.uninstallable,
     });
   })
-  .default('software', undefined, 'all')
+  .default('software', undefined, 'auto')
   .help()
   .parse();
 
 function findSoftwareToInstall(softwareIds: string[], uninstallable = false): Software[] {
+  const auto = softwareIds.length === 0;
   const matchingPlatform = uninstallable ? () => true : (sw: Software) => sw.platforms.includes(platform());
-  const matchingFilter = softwareIds.length === 0 ? () => true : (sw: Software) => softwareIds.includes(idify(sw.name));
+  const matchingFilter = auto ? () => true : (sw: Software) => softwareIds.includes(idify(sw.name));
   const shouldBeInstalled = (sw: Software) => matchingPlatform(sw) && matchingFilter(sw);
   return [...nonUiSoftware.filter(shouldBeInstalled), ...uiSoftware.filter(shouldBeInstalled)];
 }
@@ -82,6 +83,7 @@ async function doList(options: { softwareIds: string[]; uninstallable: boolean }
 
 async function doInstall(options: { dryRun: boolean; softwareIds: string[]; force: boolean }): Promise<void> {
   const softwareToInstall = findSoftwareToInstall(options.softwareIds ?? []);
+  const auto = options.softwareIds?.length === 0;
 
   for (const software of softwareToInstall) {
     const installed = await isInstalled(software);
@@ -97,6 +99,10 @@ async function doInstall(options: { dryRun: boolean; softwareIds: string[]; forc
       }
       console.log(`✅ ${software.name} was successfully installed!`);
       console.log();
+      if (auto && software.preferIsolatedInstall) {
+        console.log(`Exiting for isolated install.`);
+        break;
+      }
     }
   }
   console.log('✅ Done!');

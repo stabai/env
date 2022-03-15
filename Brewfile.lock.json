@@ -1029,6 +1029,12 @@
         "HOMEBREW_PREFIX": "/home/linuxbrew/.linuxbrew",
         "Homebrew/linuxbrew-core": "23a84323c1f4609e095470fb7b544b2f230cd37a",
         "GCC": "11.2.0"
+      },
+      "Ubuntu 21.10 (impish)": {
+        "HOMEBREW_VERSION": "3.4.1",
+        "HOMEBREW_PREFIX": "/home/linuxbrew/.linuxbrew",
+        "Homebrew/linuxbrew-core": "7accaea959d9be7dacfcba21f7f09916db056d65",
+        "GCC": "11.2.0"
       }
     }
   }

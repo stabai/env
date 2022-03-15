@@ -7,14 +7,16 @@ export const nonUiSoftware: NonUiSoftware[] = [
   {
     name: 'Zsh',
     platforms: ['darwin', 'linux'],
-    installationChecker: { commandName: 'zsh' },
+    preferIsolatedInstall: true,
+    installationChecker: { commands: ['zsh'] },
     brewPackage: { package: 'zsh', macOnly: true },
     linuxPackages: ['zsh'],
   },
   {
     name: 'Oh My Zsh',
     platforms: ['darwin', 'linux'],
-    installationChecker: { litmusFiles: ['~/.oh-my-zsh'] },
+    preferIsolatedInstall: true,
+    installationChecker: { files: ['~/.oh-my-zsh'] },
     macManualInstallCommand: 'sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"',
     linuxManualInstallCommand: 'sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"',
     postInstall: async () => {
@@ -33,13 +35,15 @@ export const nonUiSoftware: NonUiSoftware[] = [
   {
     name: 'Snap',
     platforms: ['linux'],
-    installationChecker: { commandName: 'snap' },
+    preferIsolatedInstall: true,
+    installationChecker: { commands: ['snap'] },
     linuxPackages: ['snapd'],
   },
   {
     name: 'Flatpak',
     platforms: ['linux'],
-    installationChecker: { commandName: 'flatpak' },
+    preferIsolatedInstall: true,
+    installationChecker: { commands: ['flatpak'] },
     linuxPackages: ['flatpak'],
     postInstall: async () => {
       await run([
@@ -58,7 +62,7 @@ export const nonUiSoftware: NonUiSoftware[] = [
   {
     name: 'Nix',
     platforms: ['darwin', 'linux'],
-    installationChecker: { commandName: 'nix-shell' },
+    installationChecker: { commands: ['nix-shell'] },
     macManualInstallCommand: 'sh <(curl -L https://nixos.org/nix/install)',
     linuxManualInstallCommand: 'sh <(curl -L https://nixos.org/nix/install) --daemon',
     wslManualInstallCommand: 'sh <(curl -L https://nixos.org/nix/install) --no-daemon',
@@ -69,7 +73,7 @@ export const uiSoftware: UiSoftware[] = [
   {
     name: 'Google Chrome',
     platforms: ['darwin', 'linux'],
-    installationChecker: { commandName: 'google-chrome' }, // TODO: also google-chrome-stable
+    installationChecker: { commands: ['google-chrome', 'google-chrome-stable'] },
     brewPackage: { cask: 'google-chrome', macOnly: true },
     dpkgThirdParty: 'https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb',
     eopkgThirdParty: {
@@ -81,16 +85,16 @@ export const uiSoftware: UiSoftware[] = [
   {
     name: 'Visual Studio Code',
     platforms: ['darwin', 'linux'],
-    installationChecker: { commandName: 'code' }, // TODO: also code-oss
-    // Add: sudo eopkg install vscode
+    installationChecker: { commands: ['code', 'code-oss'] },
     brewPackage: { cask: 'visual-studio-code', macOnly: true },
+    linuxPackages: ['vscode'],
     snapPackage: { package: 'code', classic: true },
   },
   {
     name: 'JetBrains Toolbox',
     platforms: ['darwin', 'linux'],
     installationChecker: {
-      litmusFiles: [
+      files: [
         '~/.local/share/JetBrains/Toolbox/bin/jetbrains-toolbox',
         '~/Library/Application Support/JetBrains/Toolbox/apps',
       ],
@@ -106,40 +110,50 @@ export const uiSoftware: UiSoftware[] = [
   {
     name: 'Zoom',
     platforms: ['darwin', 'linux'],
-    installationChecker: { commandName: 'zoom' },
+    installationChecker: { commands: ['zoom', 'zoom-client'] },
     brewPackage: { cask: 'zoom', macOnly: true },
     snapPackage: { package: 'zoom-client' },
   },
   {
     name: 'Slack',
     platforms: ['darwin', 'linux'],
-    installationChecker: { commandName: 'slack' },
-    // TODO: Add: sudo eopkg install slack-desktop
+    installationChecker: { commands: ['slack'] },
+    linuxPackages: ['slack-desktop'],
     brewPackage: { cask: 'slack', macOnly: true },
     snapPackage: { package: 'slack', classic: true },
   },
   {
     name: 'Discord',
     platforms: ['darwin', 'linux'],
-    installationChecker: { commandName: 'discord' },
-    // TODO: Add: sudo eopkg install discord
+    installationChecker: { commands: ['discord'] },
+    linuxPackages: ['discord'],
     brewPackage: { cask: 'discord', macOnly: true },
     snapPackage: { package: 'discord' },
   },
   {
+    name: 'Lunatask',
+    platforms: ['linux'],
+    snapPackage: { package: 'lunatask' },
+  },
+  {
     name: 'Insomnia',
     platforms: ['darwin', 'linux'],
-    installationChecker: { commandName: 'insomnia' },
-    // TODO: Add: sudo eopkg install insomnia
+    installationChecker: { commands: ['insomnia'] },
+    linuxPackages: ['insomnia'],
     brewPackage: { cask: 'insomnia', macOnly: true },
     snapPackage: { package: 'insomnia' },
   },
-  // TODO: also add CLI: sudo eopkg install github-cli
-  // TODO: also check installs from flatpak: flatpak info io.github.shiftey.Desktop
+  {
+    name: 'GitHub CLI',
+    platforms: ['darwin', 'linux'],
+    installationChecker: { commands: ['gh'] },
+    brewPackage: { package: 'gh', macOnly: false },
+
+  },
   {
     name: 'GitHub Desktop',
     platforms: ['darwin', 'linux'],
-    installationChecker: { commandName: 'github' },
+    installationChecker: { commands: ['github'] },
     brewPackage: { cask: 'github', macOnly: true },
     flatpakPackage: { remote: 'flathub', package: 'io.github.shiftey.Desktop' },
   },
@@ -206,11 +220,13 @@ export async function isInstalled(software: Software | string): Promise<boolean>
       const result = await runPiped(shellEval(`command -v ${software}`));
       return result.status.success;
     }
-    if (hasKey(software.installationChecker, 'commandName')) {
-      promises.push(runPiped(shellEval(`command -v ${software.installationChecker.commandName}`)));
+    if (hasKey(software.installationChecker, 'commands')) {
+      for (const command of software.installationChecker.commands) {
+        promises.push(runPiped(shellEval(`command -v ${command}`)));
+      }
     }
-    if (hasKey(software.installationChecker, 'litmusFiles')) {
-      for (const path of software.installationChecker.litmusFiles) {
+    if (hasKey(software.installationChecker, 'files')) {
+      for (const path of software.installationChecker.files) {
         promises.push(Deno.lstat(expandPath(path)));
       }
     }
@@ -219,6 +235,12 @@ export async function isInstalled(software: Software | string): Promise<boolean>
     }
     if (hasKey(software.brewPackage, 'cask')) {
       promises.push(runPiped(['brew', 'ls', '--cask', software.brewPackage.cask]));
+    }
+    if (hasKey(software, 'flatpakPackage')) {
+      promises.push(runPiped(['flatpak', 'info', software.flatpakPackage.package]));
+    }
+    if (hasKey(software, 'snapPackage')) {
+      promises.push(runPiped(['snap', 'list', software.snapPackage.package]));
     }
     const settled = await Promise.allSettled(promises);
     return settled.filter(p => p.status === 'fulfilled').length > 0;
