@@ -115,6 +115,12 @@ export const uiSoftware: UiSoftware[] = [
     snapPackage: { package: 'zoom-client' },
   },
   {
+    name: 'Google Chat',
+    platforms: ['darwin', 'linux'],
+    brewPackage: { cask: 'google-chat-electron', macOnly: true },
+    snapPackage: { package: 'google-chat-electron' },
+  },
+  {
     name: 'Slack',
     platforms: ['darwin', 'linux'],
     installationChecker: { commands: ['slack'] },
