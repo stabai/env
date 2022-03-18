@@ -1,5 +1,6 @@
 alias src="exec zsh"
 alias ohmy="code $(dirname $(dirname $0))/env.code-workspace"
+alias lsal="ls -al $@"
 
 quick_folder "my" "$HOME"
 
