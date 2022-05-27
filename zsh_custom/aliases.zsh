@@ -11,8 +11,5 @@ addalias() {
   echo "alias $alias_name=\"$@\"" >> $ZSH_CUSTOM/aliases.zsh
 }
 
-shawn() {
-  fortune | cowsay -f $(ls /home/linuxbrew/.linuxbrew/Cellar/cowsay/3.04_1/share/cows/*.cow | shuf -n1)
-}
-
-alias yuni="open ~/Downloads/yuni.jpg"
+alias yuni="imgcat ~/Downloads/yuni.jpg"
+alias dockerclean="docker container prune && docker image prune -a"
